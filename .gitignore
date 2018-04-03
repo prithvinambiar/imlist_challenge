@@ -3,4 +3,4 @@
 data/*
 !data/.gitkeep
 
-download_from_validation.json.log
+download_from_*.json.log

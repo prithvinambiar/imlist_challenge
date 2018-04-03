@@ -1,4 +1,7 @@
 #!/usr/bin/python3.6
+# This script is based on https://www.kaggle.com/syltruong/img-download-multi-proc-bar-resume-fail-logs
+# with additional support to enter percentage as parameter
+#
 # Note to Kagglers: This script will not run directly in Kaggle kernels. You
 # need to download it and run it on your local machine.
 
@@ -102,24 +105,19 @@ def download_batch(input_json_file, target_dir, percentage):
     with open(input_json_file) as json_f:
         input_info = json.load(json_f)
 
-    annotations = [
-        {
-            IMAGE_ID: annotation[IMAGE_ID],
-            LABEL_ID: annotation[LABEL_ID]
-        }
-        for annotation in input_info['annotations']
-    ]
+    annotations = {}
+    for annotation in input_info['annotations']:
+        annotations[annotation[IMAGE_ID]] = annotation[LABEL_ID]
 
     image_data = []
     for image in input_info['images']:
         for url in image[URL]:
-            annotation = next(x for x in annotations if x[IMAGE_ID] == image[IMAGE_ID])
             image_data.append(
                 {
                     URL: url,
                     IMAGE_ID: image[IMAGE_ID],
                     PATH: os.path.join(target_dir, str(image[IMAGE_ID]) + '.jpg'),
-                    LABEL_ID: annotation[LABEL_ID]
+                    LABEL_ID: annotations[image[IMAGE_ID]]
                 }
             )
 
